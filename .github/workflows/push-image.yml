@@ -1,0 +1,13 @@
+name: Push image
+on:
+  workflow_dispatch:
+env:
+  DOCKER_REGISTRY: sanofi-docker-myrepo-local.jfrog.io
+jobs:
+  image:
+    runs-on: ['atmos-aws-arc-runner-set']
+    steps:
+      - uses: actions/checkout@v4
+      - run: echo ${{ secrets.ARTIFACTORY_API_KEY }} | docker login -u ${{ secrets.ARTIFACTORY_USERNAME }} --password-stdin ${{ env.DOCKER_REGISTRY }}
+      - run: docker build -t ${{ env.DOCKER_REGISTRY }}/helloworld:latest .
+      - run: docker push ${{ env.DOCKER_REGISTRY }}/helloworld:latest
